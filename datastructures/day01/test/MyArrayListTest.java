@@ -14,6 +14,7 @@ public class MyArrayListTest {
     private static final Cow JAQUAN = new Cow("Jaquan", 10, "transparent");
     private static final Cow LEGOS = new Cow("Legos", 400, "rainbow");
 
+
     @BeforeEach
     public void setUp() throws Exception{
         cows = new MyArrayList(4);

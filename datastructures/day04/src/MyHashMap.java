@@ -1,5 +1,6 @@
 import java.util.*;
 
+
 public class MyHashMap<K, V> implements Map<K, V> {
 
     // average number of entries per bucket before we grow the map
@@ -50,10 +51,8 @@ public class MyHashMap<K, V> implements Map<K, V> {
      * given a key, return the bucket where the `K, V` pair would be stored if it were in the map.
      */
     private LinkedList<Entry> chooseBucket(Object key) {
-        // TODO
-        // hint: use key.hashCode() to calculate the key's hashCode using its built in hash function
-        // then use % to choose which bucket to return.
-        return null;
+        int code = key.hashCode();
+        return buckets[code % buckets.length];
     }
 
     @Override
@@ -71,7 +70,11 @@ public class MyHashMap<K, V> implements Map<K, V> {
      */
     @Override
     public boolean containsKey(Object key) {
-        // TODO
+        LinkedList<Entry> ll = chooseBucket(key);
+        for (Entry e : ll) {
+            if (e.getKey().equals(key))
+                return true;
+        }
         return false;
     }
 
@@ -80,13 +83,26 @@ public class MyHashMap<K, V> implements Map<K, V> {
      */
     @Override
     public boolean containsValue(Object value) {
-        // TODO
+
+        for (LinkedList<Entry> ll : buckets) {
+            for (Entry e : ll) {
+                if (e.getValue() != null && e.getValue().equals(value))
+                    return true;
+                if (e.getValue() == null && value == null)
+                    return true;
+
+            }
+        }
         return false;
     }
 
     @Override
     public V get(Object key) {
-        // TODO
+        LinkedList<Entry> ll = chooseBucket(key);
+        for (Entry e : ll) {
+            if (e.getKey().equals(key))
+                return e.getValue();
+        }
         return null;
     }
 
@@ -96,9 +112,23 @@ public class MyHashMap<K, V> implements Map<K, V> {
      */
     @Override
     public V put(K key, V value) {
-        // TODO: Complete this method
-        // hint: use chooseBucket() to determine which bucket to place the pair in
-        // hint: use rehash() to appropriately grow the hashmap if needed
+        LinkedList<Entry> ll = chooseBucket(key);
+
+        for(Entry e : ll) {
+            if (e.getKey().equals(key)) {
+                V out = e.getValue();
+                ll.remove(e);
+                ll.add(new Entry(key, value));
+                return out;
+            }
+        }
+
+        ll.add(new Entry(key, value));
+        size++;
+
+        if (((double)size)/buckets.length >= ALPHA)
+            rehash(GROWTH_FACTOR);
+
         return null;
     }
 
@@ -109,9 +139,17 @@ public class MyHashMap<K, V> implements Map<K, V> {
      */
     @Override
     public V remove(Object key) {
-        // TODO
-        // hint: use chooseBucket() to determine which bucket the key would be
-        // hint: use rehash() to appropriately grow the hashmap if needed
+        LinkedList<Entry> ll = chooseBucket(key);
+        for (Entry e : ll) {
+            if (e.getKey().equals(key)) {
+                V value = e.getValue();
+                ll.remove(e);
+                size--;
+                if (((double)size/buckets.length <= BETA) && buckets.length >= MIN_BUCKETS)
+                    rehash(SHRINK_FACTOR);
+                return value;
+            }
+        }
         return null;
     }
 
@@ -128,6 +166,22 @@ public class MyHashMap<K, V> implements Map<K, V> {
      * the number of buckets is divided by 4.
      */
     private void rehash(double growthFactor) {
+        ArrayList<Entry> entries = new ArrayList<>();
+
+        for (LinkedList<Entry> ll : buckets) {
+            for (Entry e : ll) {
+                entries.add(e);
+            }
+        }
+
+        initBuckets((int)(size * growthFactor));
+        System.out.println(size * growthFactor);
+        size = 0;
+
+        for (Entry e : entries) {
+            put(e.getKey(), e.getValue());
+        }
+
         // TODO
         // hint: once you have removed all values from the buckets, use put(k, v) to add them back in the correct place
     }

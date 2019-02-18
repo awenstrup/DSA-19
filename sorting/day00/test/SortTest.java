@@ -21,6 +21,7 @@ public class SortTest {
         emptyCase = generateRandomArrayOfSize(0);
         oneCase = generateRandomArrayOfSize(1);
         twoCase = generateRandomArrayOfSize(2);
+
         fastCase = generateRandomArrayOfSize(1000);
         slowCase = generateRandomArrayOfSize(100000);
     }
@@ -39,7 +40,9 @@ public class SortTest {
         assertArrayEquals(sorter.sort(emptyCase), emptyCase);
         assertArrayEquals(sorter.sort(oneCase), sort(oneCase));
         assertArrayEquals(sorter.sort(twoCase), sort(twoCase));
+        System.out.println(Arrays.toString(fastCase));
         assertArrayEquals(sorter.sort(fastCase), sort(fastCase));
+        System.out.println(Arrays.toString(sort(fastCase)));
         assertArrayEquals(sorter.sort(slowCase), sort(slowCase));
     }
 

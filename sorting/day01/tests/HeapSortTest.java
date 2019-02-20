@@ -65,6 +65,12 @@ public class HeapSortTest {
         assertArrayEquals(sorter.sort(twoCase), sort(twoCase));
         assertArrayEquals(sorter.sort(twoCase), sort(twoCase));
         assertArrayEquals(sorter.sort(threeCase), sort(threeCase));
+
+        HeapSort s = new HeapSort();
+        s.heapify(eightCase);
+        System.out.println(Arrays.toString(eightCase));
+        System.out.println(Arrays.toString(sort(eightCase)));
+
         assertArrayEquals(sorter.sort(eightCase), sort(eightCase));
         assertArrayEquals(sorter.sort(nineCase), sort(nineCase));
         assertArrayEquals(sorter.sort(twoCase), sort(twoCase));

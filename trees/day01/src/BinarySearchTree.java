@@ -15,8 +15,13 @@ public class BinarySearchTree<T extends Comparable<T>> {
 
     public boolean add(T key) {
         if (find(root, key) != null) return false;
+
         root = insert(root, key);
         size++;
+        //System.out.println("------------------");
+        System.out.println("just added " + (Integer)key);
+        //printTree(root);
+        System.out.println();
         return true;
     }
 
@@ -113,5 +118,23 @@ public class BinarySearchTree<T extends Comparable<T>> {
             node.rightChild = insert(node.rightChild, key);
         }
         return node;
+    }
+
+    public void printTree(TreeNode<T> n) {
+        if (n != null) {
+            System.out.print(n.key + "," + n.height + "," + " ");
+        }
+        if (n.hasLeftChild()) {
+            printTree(n.leftChild);
+        }
+        else
+            System.out.print("null ");
+
+        if (n.hasRightChild()) {
+            printTree(n.rightChild);
+        }
+        else
+            System.out.print("null ");
+
     }
 }

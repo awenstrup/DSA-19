@@ -1,0 +1,8 @@
+to rotate x to the left:
+  x's left child doesnt change
+  x's right child becomes its right-left grandchild
+
+  x's right child becomes x's parent (where x is its left child)
+  check slides
+
+   

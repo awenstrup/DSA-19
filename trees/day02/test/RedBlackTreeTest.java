@@ -96,7 +96,9 @@ public class RedBlackTreeTest {
         List<Integer> input = Arrays.asList(3, 1, 2);
         for (Integer i: input) {
             rbt.add(i);
+            System.out.println("added " + i);
         }
+        System.out.println("Rooted at " + rbt.root.key + ", color is " + rbt.root.color);
         assertEquals(2, (int) rbt.root.key);
         assertEquals(1, (int) rbt.root.leftChild.key);
         assertEquals(3, (int) rbt.root.rightChild.key);
@@ -113,7 +115,9 @@ public class RedBlackTreeTest {
         List<Integer> input = Arrays.asList(3, 1, 10, 5);
         for (Integer i: input) {
             rbt.add(i);
+            System.out.println("added " + i);
         }
+        System.out.println("Rooted at " + rbt.root.key + ", color is " + rbt.root.color);
         assertEquals(3, (int) rbt.root.key);
         assertEquals(1, (int) rbt.root.leftChild.key);
         assertEquals(10, (int) rbt.root.rightChild.key);
@@ -131,7 +135,9 @@ public class RedBlackTreeTest {
         List<Integer> input = Arrays.asList(3, 1, 2, 6, 3, 4, 9, 10, 1, 2, 3);
         for (Integer i: input) {
             rbt.add(i);
+            System.out.println("added " + i);
         }
+        System.out.println("Rooted at " + rbt.root.key + ", color is " + rbt.root.color);
         isRedBlack(rbt);
         containsCorrectValues(rbt, input);
     }

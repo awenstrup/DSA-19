@@ -1,9 +1,12 @@
 package range_finding;
 
+
 import java.util.LinkedList;
 import java.util.List;
+import java.util.HashSet;
 
 public class AVLRangeTree extends BinarySearchTree<Integer> {
+
 
     /**
      * Delete a key from the tree rooted at the given node.
@@ -12,7 +15,13 @@ public class AVLRangeTree extends BinarySearchTree<Integer> {
     RangeNode<Integer> delete(RangeNode<Integer> n, Integer key) {
         n = super.delete(n, key);
         if (n != null) {
+
             n.height = 1 + Math.max(height(n.leftChild), height(n.rightChild));
+
+            n.decendants = getDecendants(n);
+            n.minD = getMinOfSubtree(n);
+            n.maxD = getMaxOfSubtree(n);
+
             return balance(n);
         }
         return null;
@@ -26,6 +35,9 @@ public class AVLRangeTree extends BinarySearchTree<Integer> {
         n = super.insert(n, key);
         if (n != null) {
             n.height = 1 + Math.max(height(n.leftChild), height(n.rightChild));
+            n.decendants = getDecendants(n);
+            n.minD = getMinOfSubtree(n);
+            n.maxD = getMaxOfSubtree(n);
             return balance(n);
         }
         return null;
@@ -39,9 +51,100 @@ public class AVLRangeTree extends BinarySearchTree<Integer> {
         n = super.deleteMin(n);
         if (n != null) {
             n.height = 1 + Math.max(height(n.leftChild), height(n.rightChild));
+            n.decendants = getDecendants(n);
+            n.minD = getMinOfSubtree(n);
+            n.maxD = getMaxOfSubtree(n);
             return balance(n);
         }
         return null;
+    }
+
+    /**
+     * Find a key's node, returning the node just above it if is not in the tree
+     */
+    public RangeNode<Integer> findRoundUp(RangeNode<Integer> n, Integer key) {
+        return null;
+    }
+
+    public int plinkoLeft(RangeNode<Integer> n, int min, int max, HashSet<RangeNode<Integer>> set) {
+        if (n == null)
+            return 0;
+
+        System.out.println("Node: " + n.key);
+        set.add(n);
+
+        if (n.key < min) {
+            System.out.println("Too small, cutting right");
+            if (n.leftChild == null)
+                return -1 + plinkoLeft(n.rightChild, min, max, set);
+            else
+                return -1 - n.leftChild.decendants + plinkoLeft(n.rightChild, min, max, set);
+        }
+
+        else if (n.key > max) {
+            System.out.println("Too big, cutting left");
+            if (n.rightChild == null)
+                return -1 + plinkoLeft(n.leftChild, min, max, set);
+            else
+                return -1 - n.rightChild.decendants + plinkoLeft(n.leftChild, min, max, set);
+        }
+
+        else {
+            System.out.println("Just right, lean left");
+            return plinkoLeft(n.leftChild, min, max, set);
+        }
+    }
+
+    public int plinkoRight(RangeNode<Integer> n, int min, int max, HashSet<RangeNode<Integer>> set) {
+        if (n == null)
+            return 0;
+
+        System.out.println("Node: " + n.key);
+
+        if (n.key < min) {
+            System.out.println("Too small, cutting right");
+            if (n.leftChild == null) {
+                if (set.contains(n))
+                    return plinkoRight(n.rightChild, min, max, set);
+                return -1 + plinkoRight(n.rightChild, min, max, set);
+            }
+            else {
+                if (set.contains(n))
+                    return plinkoRight(n.rightChild, min, max, set);
+                return -1 - n.leftChild.decendants + plinkoRight(n.rightChild, min, max, set);
+            }
+        }
+
+        else if (n.key > max) {
+            System.out.println("Too big, cutting left");
+            if (n.rightChild == null) {
+                if (set.contains(n))
+                    return plinkoRight(n.leftChild, min, max, set);
+                return -1 + plinkoRight(n.leftChild, min, max, set);
+            }
+            else {
+                if (set.contains(n))
+                    return plinkoRight(n.leftChild, min, max, set);
+                return -1 - n.rightChild.decendants + plinkoRight(n.leftChild, min, max, set);
+            }
+        }
+
+        else {
+            System.out.println("Just right, lean right");
+            return plinkoRight(n.rightChild, min, max, set);
+        }
+    }
+
+    public RangeNode<Integer> getMaxOfSubtree(RangeNode<Integer> n) {
+        while (n.hasRightChild())
+            n = n.rightChild;
+        return n;
+    }
+
+    public RangeNode<Integer> getMinOfSubtree(RangeNode<Integer> n) {
+        while (n.hasLeftChild())
+            n = n.leftChild;
+        return n;
     }
 
     // Return the height of the given node. Return -1 if null.
@@ -70,19 +173,61 @@ public class AVLRangeTree extends BinarySearchTree<Integer> {
         return x;
     }
 
+    public int getDecendants(RangeNode<Integer> n) {
+        if (n == null)
+            return 0;
+        return 1 + getDecendants(n.leftChild) + getDecendants(n.rightChild);
+    }
+
+    public boolean isInRange(RangeNode<Integer> n, int min, int max) {
+        if (n.key >= min && n.key <= max) {
+            System.out.println(n.key + " is in the range " + min + "-" + max);
+            return true;
+        }
+        return false;
+    }
+
+    public void limitedIOT(RangeNode<Integer> n, List<Integer> list, int min, int max) {
+        if (n != null) {
+            if (n.maxD.key > min)
+                limitedIOT(n.leftChild, list, min, max);
+            if (isInRange(n, min, max))
+                list.add(n.key);
+            if (n.minD.key < max)
+                limitedIOT(n.rightChild, list, min, max);
+        }
+    }
+
     // Return all keys that are between [lo, hi] (inclusive).
     // TODO: runtime = O(?)
     public List<Integer> rangeIndex(int lo, int hi) {
         // TODO
         List<Integer> l = new LinkedList<>();
+        limitedIOT(root, l, lo, hi);
+        System.out.println(l);
         return l;
     }
 
     // return the number of keys between [lo, hi], inclusive
-    // TODO: runtime = O(?)
+    // TODO: runtime = O(lgn)
     public int rangeCount(int lo, int hi) {
-        // TODO
-        return 0;
+        if (root == null)
+            return 0;
+        int sum = root.decendants;
+        System.out.println("Tree size: " + sum);
+
+        HashSet<RangeNode<Integer>> visited  = new HashSet<>();
+
+        if (root.key < lo || root.key > hi) {
+            System.out.println("Root not in range");
+        }
+
+        sum += plinkoLeft(root, lo, hi, visited);
+        System.out.println("Sum after left plinko: " + sum);
+
+        sum += plinkoRight(root, lo, hi, visited);
+        System.out.println("Sum after both plinkos: " + sum);
+        return sum;
     }
 
     /**
@@ -105,6 +250,16 @@ public class AVLRangeTree extends BinarySearchTree<Integer> {
         y.rightChild = x;
         x.height = 1 + Math.max(height(x.leftChild), height(x.rightChild));
         y.height = 1 + Math.max(height(y.leftChild), height(y.rightChild));
+
+        x.decendants = getDecendants(x);
+        y.decendants = getDecendants(y);
+
+        x.maxD = getMaxOfSubtree(x);
+        y.maxD = getMaxOfSubtree(y);
+
+        x.minD = getMinOfSubtree(x);
+        y.minD = getMinOfSubtree(y);
+
         return y;
     }
 
@@ -117,6 +272,16 @@ public class AVLRangeTree extends BinarySearchTree<Integer> {
         y.leftChild = x;
         x.height = 1 + Math.max(height(x.leftChild), height(x.rightChild));
         y.height = 1 + Math.max(height(y.leftChild), height(y.rightChild));
+
+        x.decendants = getDecendants(x);
+        y.decendants = getDecendants(y);
+
+        x.maxD = getMaxOfSubtree(x);
+        y.maxD = getMaxOfSubtree(y);
+
+        x.minD = getMinOfSubtree(x);
+        y.minD = getMinOfSubtree(y);
+
         return y;
     }
 }

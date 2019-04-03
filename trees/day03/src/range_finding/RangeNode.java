@@ -21,7 +21,7 @@ public class RangeNode<T extends Comparable<T>> {
         this.rightChild = null;
         this.height = height;
 
-        decendants = 0;
+        decendants = 1;
 
         this.maxD = null;
         this.minD = null;

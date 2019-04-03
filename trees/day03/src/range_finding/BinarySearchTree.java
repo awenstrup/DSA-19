@@ -42,7 +42,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 
     public boolean delete(T key) {
         if (find(root, key) == null) {
-            System.out.println("Key does not exist");
+            //System.out.println("Key does not exist");
             return false;
         }
         root = delete(root, key);

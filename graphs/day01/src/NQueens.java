@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class NQueens {
@@ -37,6 +38,32 @@ public class NQueens {
         return false;
     }
 
+    public static boolean checkRow(char[][] board, int r, int c) {
+        for (int i = 0; i < board[0].length; i++) {
+            if (i != c && board[r][i] == 'Q')
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean checkColumn(char[][] board, int r, int c) {
+        for (int i = 0; i < board.length; i++) {
+            if (i != r && board[i][c] == 'Q')
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean validQueenPlacement(char[][] board, int r, int c) {
+        if (board[r][c] == '.') {
+            System.out.println("No queen here");
+            return true;
+        }
+        else {
+            return !(checkRow(board, r, c) || checkColumn(board, r, c) || checkDiagonal(board, r, c));
+        }
+    }
+
 
     /**
      * Creates a deep copy of the input array and returns it
@@ -50,9 +77,71 @@ public class NQueens {
 
 
     public static List<char[][]> nQueensSolutions(int n) {
-        // TODO
         List<char[][]> answers = new ArrayList<>();
+
+        char[][] board = new char[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                board[i][j] = '.';
+            }
+        }
+
+        nQueensHelper(0, board, answers);
+
         return answers;
     }
+
+    public static void nQueensHelper(int r, char[][] current, List<char[][]> solutions) {
+        //base case
+        if (r == current.length) {
+            solutions.add(copyOf(current));
+            printBoard(current);
+            System.out.println("Valid!");
+        }
+
+        //recursive case
+        else {
+            for (int c = 0; c < current[0].length; c++) {
+                current[r][c] = 'Q';
+                //printBoard(current);
+
+                if (validQueenPlacement(current, r, c))
+                    nQueensHelper(r + 1, current, solutions);
+                else {
+                    current[r][c] = '.';
+                }
+
+                current[r][c] = '.';
+            }
+        }
+    }
+
+    public static void printBoard(char[][] board) {
+        for (char[] row : board) {
+            System.out.println(Arrays.toString(row));
+        }
+        System.out.println("---------------");
+    }
+
+    /*
+    public static void permutationHelper(List<Integer> current, List<Integer> unused, List<List<Integer>> permutations) {
+        //base case
+        if (unused.size() == 0) {
+            permutations.add(new LinkedList<>(current));
+            System.out.println(permutations);
+        }
+
+        //recursive case
+        for (int i = 0; i < unused.size(); i++) {
+            //LinkedList<Integer> workingCopy = new LinkedList<>(unused);
+            Integer item = unused.get(i);
+            current.add(item);
+            unused.remove(i);
+            permutationHelper(current, unused, permutations);
+            current.remove(item);
+            unused.add(i, item);
+        }
+    }
+    */
 
 }

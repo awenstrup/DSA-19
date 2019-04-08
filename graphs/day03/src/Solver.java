@@ -106,15 +106,15 @@ public class Solver {
         HashSet<Board> visited = new HashSet<>();
         visited.add(solutionState.board);
 
-        PriorityQueue<State> queue = new PriorityQueue<>(2000, new StateComparator());
+        PriorityQueue<State> queue = new PriorityQueue<>(1, new StateComparator());
         queue.offer(solutionState);
 
-        int counter = 0;
+        //int counter = 0;
 
         while (!(queue.isEmpty())) {
             solutionState = queue.poll();
 
-            //System.out.println("Current Board. Cost = " + solutionState.cost + ", heur = " + solutionState.board.dist);
+            //System.out.println("Current Board. Cost = " + solutionState.cost + ", heur = " + solutionState.board.dist  + ", moves = " + solutionState.moves);
             //solutionState.board.printBoard();
 
             if (solutionState.board.isGoal()) {
@@ -130,36 +130,13 @@ public class Solver {
                     visited.add(b);
                     //b.printBoard();
                     State s = new State(b, solutionState.moves + 1, solutionState);
-                    //System.out.println("Cost of board above: " + s.cost  + ", heur = " + s.board.dist);
+                    //System.out.println("Cost of board above: " + s.cost  + ", heur = " + s.board.dist + ", moves = " + s.moves);
                     queue.offer(s);
                 }
             }
-            System.out.println();
-            counter++;
+            //System.out.println();
+            //counter++;
         }
         return out;
     }
-
-    public State find(Iterable<State> iter, Board b) {
-        for (State s : iter) {
-            if (s.board.equals(b)) {
-                return s;
-            }
-        }
-        return null;
-    }
-
-    /*
-     * Debugging space
-     */
-
-    /*
-    public static void main(String[] args) {
-        int[][] initState = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
-        Board initial = new Board(initState);
-
-        Solver solver = new Solver(initial);
-    }
-    */
-
 }

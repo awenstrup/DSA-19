@@ -22,7 +22,7 @@ public class Board {
      */
     public Board(int[][] b) {
         this.tiles = b;
-        this.n = b.length;
+        this.n = 3;
         int[] temp = findEmpty();
         this.x = temp[0];
         this.y = temp[1];
@@ -31,7 +31,7 @@ public class Board {
 
     public Board(int[][] b, int newx, int newy, int newdist){
         tiles = b;
-        n = b.length;
+        n = 3;
         x = newx;
         y = newy;
         dist = newdist;
@@ -59,7 +59,7 @@ public class Board {
     }
 
     private int manhattanhelp(int[][] board, int i, int j){
-        int val = this.tiles[i][j];
+        int val = board[i][j];
         int desiredRow = (val-1)/3;
         int desiredCol = (val-1)%3;
         if(val < 9) {
@@ -106,7 +106,7 @@ public class Board {
             }
         }
         int inversions = 0;
-        for (int i = 1; i < b.length; i++) {
+        for (int i = 1; i < 9; i++) {
             int key = b[i];
             int j = i-1;
 
@@ -140,13 +140,14 @@ public class Board {
         return res;
     }
     private Board swap(int x1, int y1){
-        int newdist = dist - (manhattanhelp(tiles, x, y) - manhattanhelp(tiles, x1, y1));
+        int newdist = dist - manhattanhelp(tiles, x1, y1);
         int[][] out = copyOf();
         out[x][y] = tiles[x1][y1];
         out[x1][y1] = 9;
-        newdist += manhattanhelp(out, x, y) + manhattanhelp(out, x1, y1);
-        return new Board(out);
+        newdist += manhattanhelp(out, x, y);
 
+
+        return new Board(out, x1, y1, newdist);
     }
     /*
      * Return all neighboring boards in the state tree
@@ -170,6 +171,8 @@ public class Board {
     /*
      * Check if this board equals a given board state
      */
+
+    /*
     @Override
     public boolean equals(Object x) {
         // Check if the board equals an input Board object
@@ -192,7 +195,7 @@ public class Board {
         return true;
     }
 
-    /*
+
     public static void main(String[] args) {
         // DEBUG - Your solution can include whatever output you find useful
         int[][] initState = {{1, 2, 3}, {4, 9, 6}, {7, 8, 5}};

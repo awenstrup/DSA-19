@@ -26,8 +26,9 @@ public class Solver {
             this.board = board;
             this.moves = moves;
             this.prev = prev;
-            // TODO
-            cost = 0;
+            this.cost = board.dist;
+            if (prev != null)
+                this.cost += prev.moves + 1;
         }
 
         @Override
@@ -39,12 +40,40 @@ public class Solver {
         }
     }
 
+    private class StateComparator implements Comparator<State>{
+
+        // Overriding compare()method of Comparator
+        // for descending order of cgpa
+        public int compare(State s1, State s2) {
+            if (s1.cost < s2.cost)
+                return -1;
+            else if (s1.cost > s2.cost)
+                return 1;
+            return 0;
+        }
+    }
+
     /*
      * Return the root state of a given state
      */
     private State root(State state) {
-        // TODO: Your code here
-        return null;
+        State out = state;
+        while(out.prev != null)
+            out = out.prev;
+        return out;
+    }
+
+    private LinkedList<Board> createPath(State state) {
+        LinkedList<Board> out = new LinkedList<>();
+        while (state.prev != null) {
+            out.addFirst(state.board);
+            state = state.prev;
+        }
+
+        if (state.board != null)
+            out.addFirst(state.board);
+
+        return out;
     }
 
     /*
@@ -53,7 +82,7 @@ public class Solver {
      * and a identify the shortest path to the the goal state
      */
     public Solver(Board initial) {
-        // TODO: Your code here
+        solutionState = new State(initial, 0, null);
     }
 
     /*
@@ -61,16 +90,49 @@ public class Solver {
      * Research how to check this without exploring all states
      */
     public boolean isSolvable() {
-        // TODO: Your code here
-        return false;
+        return solutionState.board.solvable();
     }
 
     /*
      * Return the sequence of boards in a shortest solution, null if unsolvable
      */
     public Iterable<Board> solution() {
-        // TODO: Your code here
-        return null;
+        if (!(isSolvable())) {
+            return null;
+        }
+
+        LinkedList<Board> out = null;
+
+        HashSet<Board> visited = new HashSet<>();
+        visited.add(solutionState.board);
+
+        PriorityQueue<State> queue = new PriorityQueue<>(1, new StateComparator());
+        queue.offer(solutionState);
+
+        while (!(queue.isEmpty())) {
+            solutionState = queue.poll();
+
+            System.out.println("Current Board");
+            solutionState.board.printBoard();
+
+            if (solutionState.board.isGoal()) {
+                out = createPath(solutionState);
+                minMoves = out.size();
+                solved = true;
+                return out;
+            }
+
+            System.out.println("Neighbors");
+            for (Board b : solutionState.board.neighbors()) {
+                if (!visited.contains(b)) {
+                    visited.add(b);
+                    b.printBoard();
+                    queue.offer(new State(b, solutionState.moves + 1, solutionState));
+                }
+            }
+            System.out.println();
+        }
+        return out;
     }
 
     public State find(Iterable<State> iter, Board b) {
@@ -91,6 +153,5 @@ public class Solver {
 
         Solver solver = new Solver(initial);
     }
-
 
 }

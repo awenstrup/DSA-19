@@ -12,7 +12,7 @@ public class PuzzleTest {
 
     private Board board;
 
-    //@BeforeEach
+    @BeforeEach
     public void setUp() throws Exception {
         int[][] initState = {{1, 2, 3}, {4, 6, 9}, {7, 5, 8}};
         board = new Board(initState);
@@ -23,15 +23,18 @@ public class PuzzleTest {
     /**
      * Test method for void manhattan().
      */
-    //@Test
+    @Test
     public void testManhattan() {
         assertEquals(board.manhattan(), 3);
+        int[][] b2 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+        board = new Board(b2);
+        assertEquals(board.manhattan(), 0);
     }
 
     /**
      * Test method for boolean isGoal().
      */
-    //@Test
+    @Test
     public void testGoal() {
         assertEquals(board.isGoal(), false);
     }
@@ -41,7 +44,7 @@ public class PuzzleTest {
     /**
      * Test method for Solver - Unsolvable puzzle
      */
-    //@Test
+    @Test
     public void testSolverUnsolvable() {
         // Unsolvable puzzle
         int[][] initState = {{1, 9, 3}, {2, 4, 5}, {6, 7, 8}};
@@ -69,7 +72,7 @@ public class PuzzleTest {
         assertEquals(solver.minMoves, 1);
     }
 
-    /*
+
     @Test
     public void testSolverAverage() {
         int[][] initState = {{9, 1, 3}, {4, 2, 5}, {7, 8, 6}};
@@ -77,6 +80,7 @@ public class PuzzleTest {
         Solver solver = new Solver(initial);
         assertEquals(solver.isSolvable(), true);
         // Check number of moves
+        solver.solution();
         assertEquals(solver.minMoves, 4);
     }
 
@@ -88,6 +92,7 @@ public class PuzzleTest {
         Solver solver = new Solver(initial);
         assertEquals(solver.isSolvable(), true);
         // Check number of moves
+        solver.solution();
         assertEquals(solver.minMoves, 7);
     }
 
@@ -98,6 +103,7 @@ public class PuzzleTest {
         Solver solver = new Solver(initial);
         assertEquals(solver.isSolvable(), true);
         // Check number of moves
+        solver.solution();
         assertEquals(solver.minMoves, 12);
     }
 
@@ -108,6 +114,7 @@ public class PuzzleTest {
         Solver solver = new Solver(initial);
         assertEquals(solver.isSolvable(), true);
         // Check number of moves
+        solver.solution();
         assertEquals(solver.minMoves, 16);
     }
 
@@ -119,6 +126,7 @@ public class PuzzleTest {
         Solver solver = new Solver(initial);
         assertEquals(solver.isSolvable(), true);
         // Check number of moves
+        solver.solution();
         assertEquals(solver.minMoves, 22);
     }
 
@@ -129,8 +137,9 @@ public class PuzzleTest {
         Solver solver = new Solver(initial);
         assertEquals(solver.isSolvable(), true);
         // Check number of moves
+        solver.solution();
         assertEquals(solver.minMoves, 31);
     }
 
-    */
+
 }

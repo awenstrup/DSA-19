@@ -106,31 +106,36 @@ public class Solver {
         HashSet<Board> visited = new HashSet<>();
         visited.add(solutionState.board);
 
-        PriorityQueue<State> queue = new PriorityQueue<>(1, new StateComparator());
+        PriorityQueue<State> queue = new PriorityQueue<>(2000, new StateComparator());
         queue.offer(solutionState);
+
+        int counter = 0;
 
         while (!(queue.isEmpty())) {
             solutionState = queue.poll();
 
-            System.out.println("Current Board");
-            solutionState.board.printBoard();
+            //System.out.println("Current Board. Cost = " + solutionState.cost + ", heur = " + solutionState.board.dist);
+            //solutionState.board.printBoard();
 
             if (solutionState.board.isGoal()) {
                 out = createPath(solutionState);
-                minMoves = out.size();
+                minMoves = solutionState.cost;
                 solved = true;
                 return out;
             }
 
-            System.out.println("Neighbors");
+            //System.out.println("Neighbors");
             for (Board b : solutionState.board.neighbors()) {
                 if (!visited.contains(b)) {
                     visited.add(b);
-                    b.printBoard();
-                    queue.offer(new State(b, solutionState.moves + 1, solutionState));
+                    //b.printBoard();
+                    State s = new State(b, solutionState.moves + 1, solutionState);
+                    //System.out.println("Cost of board above: " + s.cost  + ", heur = " + s.board.dist);
+                    queue.offer(s);
                 }
             }
             System.out.println();
+            counter++;
         }
         return out;
     }
@@ -147,11 +152,14 @@ public class Solver {
     /*
      * Debugging space
      */
+
+    /*
     public static void main(String[] args) {
-        int[][] initState = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
+        int[][] initState = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
         Board initial = new Board(initState);
 
         Solver solver = new Solver(initial);
     }
+    */
 
 }

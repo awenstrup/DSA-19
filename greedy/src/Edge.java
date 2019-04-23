@@ -14,6 +14,10 @@ public class Edge implements Comparable<Edge> {
         return weight;
     }
 
+    public int v() {return v; }
+
+    public int w() {return w; }
+
     public int either() { // return one endpoint of the edge
         return v;
     }
